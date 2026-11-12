@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KYDOFOX | Cyber Hub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      background-color: #0b0e14;
+      color: #e2e8f0;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+    .neon-border {
+      box-shadow: 0 0 15px rgba(0, 255, 136, 0.3), inset 0 0 15px rgba(0, 255, 136, 0.2);
+    }
+    .live-pulse {
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(1.04); }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-between p-4">
+
+  <!-- Контейнер страницы -->
+  <div class="w-full max-w-md flex flex-col items-center gap-6 my-auto">
+    
+    <!-- Верхний статус стрима -->
+    <div class="w-full flex justify-between items-center px-2">
+      <span class="text-xs uppercase tracking-widest text-emerald-400 font-bold flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-400"></span> KYDOFOX CYBER HUB
+      </span>
+      <div id="twitch-header-badge" class="text-xs px-2.5 py-1 rounded-full font-bold bg-neutral-800 text-neutral-400 border border-neutral-700">
+        OFFLINE
+      </div>
+    </div>
+
+    <!-- Аватарка -->
+    <div class="relative group">
+      <div class="w-36 h-36 rounded-full p-1 bg-gradient-to-tr from-emerald-500 via-cyan-500 to-fuchsia-500 neon-border">
+        <img id="avatar-img" src="1000039290.jpg" onerror="this.onerror=null; this.src='https://api.dicebear.com/9.x/bottts-neutral/svg?seed=kydofox';" alt="KYDOFOX" class="w-full h-full object-cover rounded-full bg-neutral-900 border-2 border-[#0b0e14]">
+      </div>
+      <div class="absolute bottom-1 right-2 bg-neutral-900 text-emerald-400 p-2 rounded-full border border-emerald-500/40 text-xs">
+        <i class="fa-solid fa-gamepad"></i>
+      </div>
+    </div>
+
+    <!-- Инфо профиля -->
+    <div class="text-center space-y-1">
+      <h1 class="text-2xl font-black tracking-wider text-white flex items-center justify-center gap-2">
+        KYDOFOX <i class="fa-solid fa-circle-check text-cyan-400 text-sm"></i>
+      </h1>
+      <p class="text-xs text-neutral-400 font-medium">🦊 VTUBER • 🎮 ACTION & FPS • ⚡ CYBERPUNK VIBES</p>
+      
+      <!-- Discord тег с копированием -->
+      <button onclick="copyDiscordTag()" class="mt-2 inline-flex items-center gap-2 px-3 py-1 bg-neutral-900/80 hover:bg-neutral-800 border border-neutral-700/60 rounded-full text-xs text-neutral-300 transition-all">
+        <i class="fa-brands fa-discord text-indigo-400"></i>
+        <span id="discord-tag-label">kydo_fox</span>
+        <i class="fa-regular fa-copy text-neutral-500 text-[10px]"></i>
+      </button>
+      <div id="copy-toast" class="hidden text-[10px] text-emerald-400 font-bold transition-all">✓ Скопировано в буфер!</div>
+    </div>
+
+    <!-- Ссылки -->
+    <div class="w-full flex flex-col gap-3">
+      
+      <!-- Донат -->
+      <a id="link-donate" href="https://www.donationalerts.com/r/kydofox" target="_blank" rel="noopener noreferrer" class="p-3.5 bg-gradient-to-r from-amber-500/10 to-amber-900/20 hover:from-amber-500/20 hover:to-amber-900/30 border border-amber-500/40 rounded-xl flex items-center justify-between transition-all group">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-amber-500/20 flex items-center justify-center text-amber-400 text-lg">
+            <i class="fa-solid fa-hand-holding-dollar"></i>
+          </div>
+          <div>
+            <div class="text-sm font-bold text-amber-300">ПОДДЕРЖАТЬ / ДОНАТ</div>
+            <div class="text-[11px] text-neutral-400">Прямое сообщение на стриме и озвучка</div>
+          </div>
+        </div>
+        <span class="text-[10px] uppercase font-bold px-2 py-0.5 bg-amber-500/20 text-amber-300 rounded border border-amber-500/30">DonationAlerts</span>
+      </a>
+
+      <!-- Twitch -->
+      <a id="link-twitch" href="https://www.twitch.tv/kydofox" target="_blank" rel="noopener noreferrer" class="p-3.5 bg-neutral-900/80 hover:bg-neutral-800/90 border border-purple-500/30 hover:border-purple-500/60 rounded-xl flex items-center justify-between transition-all">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-400 text-lg">
+            <i class="fa-brands fa-twitch"></i>
+          </div>
+          <div>
+            <div class="text-sm font-bold text-white flex items-center gap-2">
+              TWITCH КАНАЛ
+              <span id="twitch-card-status" class="hidden text-[10px] bg-red-500 text-white font-bold px-1.5 py-0.2 rounded">LIVE</span>
+            </div>
+            <div id="twitch-card-desc" class="text-[11px] text-neutral-400">Прямые трансляции и интерактив с чатом</div>
+          </div>
+        </div>
+        <i class="fa-solid fa-chevron-right text-neutral-600 text-xs"></i>
+      </a>
+
+      <!-- YouTube -->
+      <a id="link-youtube" href="https://youtube.com/@kydofox" target="_blank" rel="noopener noreferrer" class="p-3.5 bg-neutral-900/80 hover:bg-neutral-800/90 border border-red-500/30 hover:border-red-500/60 rounded-xl flex items-center justify-between transition-all">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center text-red-400 text-lg">
+            <i class="fa-brands fa-youtube"></i>
+          </div>
+          <div>
+            <div class="text-sm font-bold text-white">YOUTUBE</div>
+            <div class="text-[11px] text-neutral-400">Нарезки, записи стримов и Shorts</div>
+          </div>
+        </div>
+        <i class="fa-solid fa-chevron-right text-neutral-600 text-xs"></i>
+      </a>
+
+      <!-- Telegram -->
+      <a id="link-telegram" href="https://t.me/Kydo_Fox" target="_blank" rel="noopener noreferrer" class="p-3.5 bg-neutral-900/80 hover:bg-neutral-800/90 border border-sky-500/30 hover:border-sky-500/60 rounded-xl flex items-center justify-between transition-all">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-sky-500/20 flex items-center justify-center text-sky-400 text-lg">
+            <i class="fa-brands fa-telegram"></i>
+          </div>
+          <div>
+            <div class="text-sm font-bold text-white">TELEGRAM КАНАЛ</div>
+            <div class="text-[11px] text-neutral-400">Анонсы стримов, новости и лайф-контент</div>
+          </div>
+        </div>
+        <i class="fa-solid fa-chevron-right text-neutral-600 text-xs"></i>
+      </a>
+
+      <!-- Discord Сервер -->
+      <a id="link-discord-server" href="https://discord.gg/wNbUQt6Rr" target="_blank" rel="noopener noreferrer" class="p-3.5 bg-neutral-900/80 hover:bg-neutral-800/90 border border-indigo-500/30 hover:border-indigo-500/60 rounded-xl flex items-center justify-between transition-all">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-indigo-500/20 flex items-center justify-center text-indigo-400 text-lg">
+            <i class="fa-brands fa-discord"></i>
+          </div>
+          <div>
+            <div class="text-sm font-bold text-white">DISCORD СЕРВЕР</div>
+            <div class="text-[11px] text-neutral-400">Общение сообщества, роли и войсы</div>
+          </div>
+        </div>
+        <i class="fa-solid fa-chevron-right text-neutral-600 text-xs"></i>
+      </a>
+
+      <!-- TikTok -->
+      <a id="link-tiktok" href="https://www.tiktok.com/@kydofox" target="_blank" rel="noopener noreferrer" class="p-3.5 bg-neutral-900/80 hover:bg-neutral-800/90 border border-cyan-500/30 hover:border-pink-500/40 rounded-xl flex items-center justify-between transition-all">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-cyan-500/20 flex items-center justify-center text-cyan-300 text-lg">
+            <i class="fa-brands fa-tiktok"></i>
+          </div>
+          <div>
+            <div class="text-sm font-bold text-white">TIKTOK</div>
+            <div class="text-[11px] text-neutral-400">Короткие клипы, хайлайты и мемы</div>
+          </div>
+        </div>
+        <i class="fa-solid fa-chevron-right text-neutral-600 text-xs"></i>
+      </a>
+
+      <!-- ВКонтакте -->
+      <a id="link-vk" href="https://vk.ru/kydofox" target="_blank" rel="noopener noreferrer" class="p-3.5 bg-neutral-900/80 hover:bg-neutral-800/90 border border-blue-500/30 hover:border-blue-500/60 rounded-xl flex items-center justify-between transition-all">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center text-blue-400 text-lg">
+            <i class="fa-brands fa-vk"></i>
+          </div>
+          <div>
+            <div class="text-sm font-bold text-white">ГРУППА ВК</div>
+            <div class="text-[11px] text-neutral-400">Новости, арты и расписание</div>
+          </div>
+        </div>
+        <i class="fa-solid fa-chevron-right text-neutral-600 text-xs"></i>
+      </a>
+
+    </div>
+
+    <!-- Блок расписания стримов -->
+    <div class="w-full bg-neutral-900/60 border border-neutral-800 rounded-2xl p-4">
+      <div class="flex justify-between items-center mb-3">
+        <span class="text-xs uppercase font-bold text-emerald-400 tracking-wider flex items-center gap-2">
+          <i class="fa-regular fa-calendar-check"></i> РАСПИСАНИЕ СТРИМОВ
+        </span>
+      </div>
+      <div id="schedule-container" class="grid grid-cols-1 gap-2 text-xs">
+        <!-- Генерируется из Firebase -->
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Футер с кнопкой админки -->
+  <footer class="w-full text-center py-4 text-xs text-neutral-600 flex flex-col items-center gap-2">
+    <div>© KYDOFOX HUB • All rights reserved</div>
+    <button onclick="openAdminModal()" class="text-neutral-500 hover:text-emerald-400 flex items-center gap-1.5 transition-colors">
+      <i class="fa-solid fa-lock text-[10px]"></i> Панель управления
+    </button>
+  </footer>
+
+  <!-- Модальное окно авторизации в Админке -->
+  <div id="modal-auth" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 w-full max-w-sm space-y-4">
+      <div class="flex justify-between items-center">
+        <h3 class="text-base font-bold text-white flex items-center gap-2">
+          <i class="fa-solid fa-shield-halved text-emerald-400"></i> Вход для стримера
+        </h3>
+        <button onclick="closeModals()" class="text-neutral-500 hover:text-white">&times;</button>
+      </div>
+      <div>
+        <label class="block text-xs text-neutral-400 mb-1">Введите пароль:</label>
+        <input type="password" id="admin-pass-input" onkeydown="if(event.key==='Enter') submitAdminAuth()" placeholder="Пароль..." class="w-full bg-neutral-950 border border-neutral-700 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-emerald-500">
+        <div id="auth-error" class="hidden text-xs text-red-400 mt-1">Неверный пароль!</div>
+      </div>
+      <button onclick="submitAdminAuth()" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-sm rounded-lg transition-colors">
+        Войти
+      </button>
+    </div>
+  </div>
+
+  <!-- Модальное окно Админ-панели -->
+  <div id="modal-panel" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-5 w-full max-w-lg space-y-5 my-8 max-h-[90vh] overflow-y-auto">
+      
+      <div class="flex justify-between items-center border-b border-neutral-800 pb-3">
+        <h3 class="text-base font-bold text-emerald-400 flex items-center gap-2">
+          <i class="fa-solid fa-sliders"></i> Управление Cyber Hub (Облако)
+        </h3>
+        <button onclick="closeModals()" class="text-neutral-500 hover:text-white text-lg">&times;</button>
+      </div>
+
+      <!-- Изменение аватарки -->
+      <div class="p-3.5 bg-neutral-950 border border-neutral-800 rounded-xl space-y-3">
+        <h4 class="text-xs font-bold text-neutral-400 uppercase tracking-wider">Аватарка профиля</h4>
+        <div class="flex items-center gap-4">
+          <img id="adm-avatar-preview" src="1000039290.jpg" class="w-16 h-16 rounded-full object-cover border-2 border-emerald-500/50 bg-neutral-900">
+          <div class="flex-1 space-y-2">
+            <div class="flex flex-wrap gap-2">
+              <label class="cursor-pointer px-3 py-1.5 bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 rounded-lg text-xs font-bold transition-all inline-flex items-center gap-1.5">
+                <i class="fa-solid fa-upload"></i> Загрузить фото
+                <input type="file" id="adm-avatar-file" accept="image/*" onchange="handleAvatarUpload(event)" class="hidden">
+              </label>
+              <button type="button" onclick="resetAvatar()" class="px-3 py-1.5 bg-neutral-800 hover:bg-neutral-700 text-neutral-300 rounded-lg text-xs font-bold transition-all">
+                Сбросить
+              </button>
+            </div>
+            <input type="text" id="adm-avatar-url" oninput="previewAvatarUrl(this.value)" placeholder="Или вставьте прямую ссылку (https://...)" class="w-full bg-neutral-900 border border-neutral-800 rounded p-1.5 text-xs text-white">
+          </div>
+        </div>
+        <p class="text-[10px] text-neutral-500">Загруженное фото автоматически сжимается для мгновенной загрузки из облака у всех зрителей.</p>
+      </div>
+
+      <!-- Переключатель стрима -->
+      <div class="p-3 bg-neutral-950 border border-neutral-800 rounded-xl flex items-center justify-between">
+        <div>
+          <div class="text-sm font-bold text-white">Статус трансляции Twitch</div>
+          <div class="text-xs text-neutral-400">Включает плашку «В ЭФИРЕ» у всех зрителей</div>
+        </div>
+        <button id="admin-toggle-stream" onclick="toggleStreamStatus()" class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all bg-neutral-800 text-neutral-400">
+          OFFLINE
+        </button>
+      </div>
+
+      <!-- Ссылки -->
+      <div class="space-y-3">
+        <h4 class="text-xs font-bold text-neutral-400 uppercase tracking-wider">Ссылки на каналы</h4>
+        <div class="grid grid-cols-1 gap-2 text-xs">
+          <div>
+            <label class="text-neutral-400">DonationAlerts:</label>
+            <input type="text" id="adm-link-donate" class="w-full bg-neutral-950 border border-neutral-800 rounded p-2 text-white mt-1">
+          </div>
+          <div>
+            <label class="text-neutral-400">Twitch:</label>
+            <input type="text" id="adm-link-twitch" class="w-full bg-neutral-950 border border-neutral-800 rounded p-2 text-white mt-1">
+          </div>
+          <div>
+            <label class="text-neutral-400">YouTube:</label>
+            <input type="text" id="adm-link-youtube" class="w-full bg-neutral-950 border border-neutral-800 rounded p-2 text-white mt-1">
+          </div>
+          <div>
+            <label class="text-neutral-400">Telegram:</label>
+            <input type="text" id="adm-link-telegram" class="w-full bg-neutral-950 border border-neutral-800 rounded p-2 text-white mt-1">
+          </div>
+          <div>
+            <label class="text-neutral-400">Discord Сервер:</label>
+            <input type="text" id="adm-link-discord" class="w-full bg-neutral-950 border border-neutral-800 rounded p-2 text-white mt-1">
+          </div>
+          <div>
+            <label class="text-neutral-400">TikTok:</label>
+            <input type="text" id="adm-link-tiktok" class="w-full bg-neutral-950 border border-neutral-800 rounded p-2 text-white mt-1">
+          </div>
+          <div>
+            <label class="text-neutral-400">ВКонтакте:</label>
+            <input type="text" id="adm-link-vk" class="w-full bg-neutral-950 border border-neutral-800 rounded p-2 text-white mt-1">
+          </div>
+        </div>
+      </div>
+
+      <!-- Редактор расписания -->
+      <div class="space-y-2">
+        <div class="flex justify-between items-center">
+          <h4 class="text-xs font-bold text-neutral-400 uppercase tracking-wider">Расписание стримов</h4>
+          <button onclick="addScheduleRow()" class="text-xs text-emerald-400 hover:underline">+ Добавить слот</button>
+        </div>
+        <div id="adm-schedule-rows" class="space-y-2 max-h-48 overflow-y-auto pr-1">
+          <!-- Динамические строки -->
+        </div>
+      </div>
+
+      <!-- Кнопки сохранения -->
+      <div class="pt-3 border-t border-neutral-800 flex justify-end gap-2">
+        <button onclick="closeModals()" class="px-4 py-2 bg-neutral-800 hover:bg-neutral-700 text-xs font-bold text-neutral-300 rounded-lg">Отмена</button>
+        <button id="save-cloud-btn" onclick="saveAllToCloud()" class="px-5 py-2 bg-emerald-500 hover:bg-emerald-400 text-xs font-bold text-black rounded-lg transition-colors">Сохранить в облако</button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // Адрес вашей базы данных Firebase:
+    const FIREBASE_DB_URL = "https://kydofox-default-rtdb.asia-southeast1.firebasedatabase.app/hub.json";
+    
+    // Пароль администратора:
+    const ADMIN_PASSWORD = "kydo1234!@#$";
+
+    const DEFAULT_AVATAR = "1000039290.jpg";
+
+    const DEFAULT_DATA = {
+      avatar: DEFAULT_AVATAR,
+      isLive: false,
+      links: {
+        donate: "https://www.donationalerts.com/r/kydofox",
+        twitch: "https://www.twitch.tv/kydofox",
+        youtube: "https://youtube.com/@kydofox",
+        telegram: "https://t.me/Kydo_Fox",
+        discord: "https://discord.gg/wNbUQt6Rr",
+        tiktok: "https://www.tiktok.com/@kydofox",
+        vk: "https://vk.ru/kydofox"
+      },
+      schedule: [
+        { day: "ВТОРНИК", time: "19:00 МСК", title: "Valorant & Рейтинговые катки" },
+        { day: "ЧЕТВЕРГ", time: "18:30 МСК", title: "Интерактив / Прохождение новеллы" },
+        { day: "СУББОТА", time: "20:00 МСК", title: "Субботний чилл & Караоке с чатом" }
+      ]
+    };
+
+    let siteData = { ...DEFAULT_DATA };
+    let pendingAvatarData = DEFAULT_AVATAR;
+
+    // 1. Загрузка данных из облака при открытии сайта
+    async function loadDataFromCloud() {
+      try {
+        const res = await fetch(FIREBASE_DB_URL);
+        const data = await res.json();
+        if (data) {
+          siteData = {
+            ...DEFAULT_DATA,
+            ...data,
+            links: { ...DEFAULT_DATA.links, ...(data.links || {}) },
+            schedule: data.schedule || DEFAULT_DATA.schedule
+          };
+        }
+      } catch (e) {
+        console.warn("Ошибка связи с базой, используем резервные данные:", e);
+      }
+      renderSite();
+    }
+
+    // 2. Отображение данных на странице
+    function renderSite() {
+      // Аватарка
+      const avatarEl = document.getElementById("avatar-img");
+      avatarEl.src = siteData.avatar || DEFAULT_AVATAR;
+
+      // Статус Twitch
+      const badge = document.getElementById("twitch-header-badge");
+      const cardStatus = document.getElementById("twitch-card-status");
+      const cardDesc = document.getElementById("twitch-card-desc");
+
+      if (siteData.isLive) {
+        badge.className = "text-xs px-2.5 py-1 rounded-full font-bold bg-red-600/20 text-red-400 border border-red-500/50 live-pulse";
+        badge.innerHTML = "● В ЭФИРЕ";
+        cardStatus.classList.remove("hidden");
+        cardDesc.innerHTML = "<span class='text-red-400 font-semibold'>🔴 Стрим идёт прямо сейчас! Переходи</span>";
+      } else {
+        badge.className = "text-xs px-2.5 py-1 rounded-full font-bold bg-neutral-800 text-neutral-400 border border-neutral-700";
+        badge.innerHTML = "OFFLINE";
+        cardStatus.classList.add("hidden");
+        cardDesc.innerHTML = "Прямые трансляции и интерактив с чатом";
+      }
+
+      // Ссылки
+      document.getElementById("link-donate").href = siteData.links.donate;
+      document.getElementById("link-twitch").href = siteData.links.twitch;
+      document.getElementById("link-youtube").href = siteData.links.youtube;
+      document.getElementById("link-telegram").href = siteData.links.telegram;
+      document.getElementById("link-discord-server").href = siteData.links.discord;
+      document.getElementById("link-tiktok").href = siteData.links.tiktok;
+      document.getElementById("link-vk").href = siteData.links.vk;
+
+      // Расписание
+      const schedBox = document.getElementById("schedule-container");
+      schedBox.innerHTML = siteData.schedule.map(item => `
+        <div class="flex items-center justify-between p-2 rounded-xl bg-neutral-950/70 border border-neutral-800/80">
+          <div class="flex items-center gap-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+            <span class="font-bold text-neutral-200">${item.day}</span>
+            <span class="text-neutral-500">•</span>
+            <span class="text-neutral-400">${item.title}</span>
+          </div>
+          <span class="font-mono text-emerald-400 font-semibold ml-2 whitespace-nowrap">${item.time}</span>
+        </div>
+      `).join("");
+    }
+
+    // Обработка загрузки файла аватарки с авто-сжатием для Firebase
+    function handleAvatarUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement("canvas");
+          const MAX_SIZE = 400; // Оптимальное разрешение для аватарки
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > MAX_SIZE) {
+              height *= MAX_SIZE / width;
+              width = MAX_SIZE;
+            }
+          } else {
+            if (height > MAX_SIZE) {
+              width *= MAX_SIZE / height;
+              height = MAX_SIZE;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, width, height);
+
+          const compressedBase64 = canvas.toDataURL("image/jpeg", 0.85);
+          pendingAvatarData = compressedBase64;
+          document.getElementById("adm-avatar-preview").src = compressedBase64;
+          document.getElementById("adm-avatar-url").value = "";
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function previewAvatarUrl(url) {
+      const trimmed = url.trim();
+      if (trimmed) {
+        pendingAvatarData = trimmed;
+        document.getElementById("adm-avatar-preview").src = trimmed;
+      }
+    }
+
+    function resetAvatar() {
+      pendingAvatarData = DEFAULT_AVATAR;
+      document.getElementById("adm-avatar-preview").src = DEFAULT_AVATAR;
+      document.getElementById("adm-avatar-url").value = "";
+      document.getElementById("adm-avatar-file").value = "";
+    }
+
+    // 3. Сохранение изменений в Firebase
+    async function saveAllToCloud() {
+      const saveBtn = document.getElementById("save-cloud-btn");
+      saveBtn.disabled = true;
+      saveBtn.innerText = "Сохранение...";
+
+      siteData.avatar = pendingAvatarData;
+      siteData.links.donate = document.getElementById("adm-link-donate").value;
+      siteData.links.twitch = document.getElementById("adm-link-twitch").value;
+      siteData.links.youtube = document.getElementById("adm-link-youtube").value;
+      siteData.links.telegram = document.getElementById("adm-link-telegram").value;
+      siteData.links.discord = document.getElementById("adm-link-discord").value;
+      siteData.links.tiktok = document.getElementById("adm-link-tiktok").value;
+      siteData.links.vk = document.getElementById("adm-link-vk").value;
+
+      const rows = document.querySelectorAll(".sched-edit-row");
+      const newSchedule = [];
+      rows.forEach(r => {
+        newSchedule.push({
+          day: r.querySelector(".sched-day").value,
+          time: r.querySelector(".sched-time").value,
+          title: r.querySelector(".sched-title").value
+        });
+      });
+      siteData.schedule = newSchedule;
+
+      try {
+        const response = await fetch(FIREBASE_DB_URL, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(siteData)
+        });
+        if (!response.ok) throw new Error("HTTP " + response.status);
+        alert("Данные и аватарка успешно сохранены в облаке!");
+        renderSite();
+        closeModals();
+      } catch (e) {
+        alert("Ошибка сохранения: " + e.message);
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.innerText = "Сохранить в облако";
+      }
+    }
+
+    // 4. Логика админ-панели
+    function openAdminModal() {
+      document.getElementById("admin-pass-input").value = "";
+      document.getElementById("auth-error").classList.add("hidden");
+      document.getElementById("modal-auth").classList.remove("hidden");
+    }
+
+    function closeModals() {
+      document.getElementById("modal-auth").classList.add("hidden");
+      document.getElementById("modal-panel").classList.add("hidden");
+    }
+
+    function submitAdminAuth() {
+      const pass = document.getElementById("admin-pass-input").value;
+      if (pass === ADMIN_PASSWORD) {
+        document.getElementById("modal-auth").classList.add("hidden");
+        openAdminDashboard();
+      } else {
+        document.getElementById("auth-error").classList.remove("hidden");
+      }
+    }
+
+    function openAdminDashboard() {
+      pendingAvatarData = siteData.avatar || DEFAULT_AVATAR;
+      document.getElementById("adm-avatar-preview").src = pendingAvatarData;
+      document.getElementById("adm-avatar-url").value = pendingAvatarData.startsWith("http") ? pendingAvatarData : "";
+      document.getElementById("adm-avatar-file").value = "";
+
+      document.getElementById("adm-link-donate").value = siteData.links.donate;
+      document.getElementById("adm-link-twitch").value = siteData.links.twitch;
+      document.getElementById("adm-link-youtube").value = siteData.links.youtube;
+      document.getElementById("adm-link-telegram").value = siteData.links.telegram;
+      document.getElementById("adm-link-discord").value = siteData.links.discord;
+      document.getElementById("adm-link-tiktok").value = siteData.links.tiktok;
+      document.getElementById("adm-link-vk").value = siteData.links.vk;
+
+      updateStreamBtn();
+
+      const container = document.getElementById("adm-schedule-rows");
+      container.innerHTML = "";
+      siteData.schedule.forEach(item => {
+        container.insertAdjacentHTML('beforeend', getScheduleRowHtml(item.day, item.time, item.title));
+      });
+
+      document.getElementById("modal-panel").classList.remove("hidden");
+    }
+
+    function toggleStreamStatus() {
+      siteData.isLive = !siteData.isLive;
+      updateStreamBtn();
+    }
+
+    function updateStreamBtn() {
+      const btn = document.getElementById("admin-toggle-stream");
+      if (siteData.isLive) {
+        btn.className = "px-4 py-1.5 rounded-lg text-xs font-bold bg-red-600 text-white";
+        btn.innerText = "● В ЭФИРЕ";
+      } else {
+        btn.className = "px-4 py-1.5 rounded-lg text-xs font-bold bg-neutral-800 text-neutral-400";
+        btn.innerText = "OFFLINE";
+      }
+    }
+
+    function getScheduleRowHtml(day, time, title) {
+      return `
+        <div class="sched-edit-row flex items-center gap-1.5 bg-neutral-950 p-2 border border-neutral-800 rounded">
+          <input type="text" class="sched-day w-24 bg-neutral-900 border border-neutral-700 rounded p-1 text-xs text-white" value="${day}">
+          <input type="text" class="sched-time w-24 bg-neutral-900 border border-neutral-700 rounded p-1 text-xs text-white" value="${time}">
+          <input type="text" class="sched-title flex-1 bg-neutral-900 border border-neutral-700 rounded p-1 text-xs text-white" value="${title}">
+          <button type="button" onclick="this.parentElement.remove()" class="text-red-400 hover:text-red-300 px-1 text-sm">&times;</button>
+        </div>
+      `;
+    }
+
+    function addScheduleRow() {
+      document.getElementById("adm-schedule-rows").insertAdjacentHTML('beforeend', getScheduleRowHtml("ДЕНЬ", "19:00 МСК", "Новый стрим"));
+    }
+
+    function copyDiscordTag() {
+      navigator.clipboard.writeText("kydo_fox");
+      const toast = document.getElementById("copy-toast");
+      toast.classList.remove("hidden");
+      setTimeout(() => toast.classList.add("hidden"), 2000);
+    }
+
+    loadDataFromCloud();
+  </script>
+</body>
+</html>
